@@ -44,11 +44,11 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
 
   if (isNaN(characterId)) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
+      <div className="container mx-auto px-4 py-16 text-center text-[#00ffd1]">
         <h1 className="text-2xl font-bold mb-4">Invalid Character ID</h1>
-        <p className="mb-6">The character ID must be a number.</p>
+        <p className="mb-6 text-[#98fffd]">The character ID must be a number.</p>
         <Link href="/" passHref>
-          <Button>
+          <Button className="text-[#00ffd1] border-[#00ffd1] hover:bg-[#00ffd1] hover:text-black">
             <ChevronLeft className="mr-2 h-4 w-4" />
             Back to Characters
           </Button>
@@ -59,8 +59,6 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
 
   try {
     const character = await getCharacter(characterId);
-
-    // Get episode numbers from URLs
     const episodeNumbers = character.episode
       .map((ep: string) => {
         const match = ep.match(/\/(\d+)$/);
@@ -68,131 +66,124 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
       })
       .filter(Boolean);
 
-    // Get status color
-    const getStatusColor = (status: string) => {
-      switch (status) {
-        case "Alive":
-          return "bg-green-500";
-        case "Dead":
-          return "bg-red-500";
-        default:
-          return "bg-gray-500";
-      }
-    };
-
     return (
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
-        <Link
-          href="/"
-          className="inline-flex items-center mb-6 text-muted-foreground hover:text-foreground"
-        >
-          <ChevronLeft className="mr-1 h-4 w-4" />
-          Back to Characters
-        </Link>
+      <div className="container mx-auto px-4 py-8 bg-[#0a0a0a] min-h-screen">
+        <div className="max-w-5xl mx-auto">
+          <Link
+            href="/"
+            className="inline-flex items-center mb-6 text-[#9cf7f7] hover:text-[#ffffff]"
+          >
+            <ChevronLeft className="mr-1 h-4 w-4" />
+            Back to Characters
+          </Link>
 
-        <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8">
-          <div className="relative">
-            <div className="bg-chart-5/10 p-1 border overflow-hidden relative group">
-              <Image
-                src={character.image}
-                alt={character.name}
-                width={300}
-                height={300}
-                priority
-                className="w-full rounded-md"
-              />
-              <div className="absolute top-3 right-3">
-                <FavoriteButton
-                  characterId={character.id}
-                  characterName={character.name}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div className="flex justify-between items-start mb-2">
-              <h1 className="text-3xl md:text-4xl font-bold">{character.name}</h1>
-            </div>
-
-            <div className="flex items-center mb-4">
-              <span
-                className={`h-3 w-3 rounded-full mr-2 ${getStatusColor(
-                  character.status
-                )}`}
-              ></span>
-              <span className="text-lg text-muted-foreground">
-                {character.status} - {character.species}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-              <Card>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-lg mb-2">Last known location</h3>
-                  <p className="text-muted-foreground">{character.location.name}</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-lg mb-2">First seen in</h3>
-                  <p className="text-muted-foreground">{character.origin.name}</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold text-lg mb-2">Information</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2">
-                  <div>
-                    <span className="text-muted-foreground">Gender:</span>{" "}
-                    <span>{character.gender}</span>
-                  </div>
-                  {character.type && (
-                    <div>
-                      <span className="text-muted-foreground">Type:</span>{" "}
-                      <span>{character.type}</span>
+          <Card className="border border-[#00ffd1] bg-[#0a0a0a] shadow-lg">
+            <CardContent className="p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <div className="flex justify-center md:justify-start">
+                  <div className="relative w-full max-w-[300px] aspect-square">
+                    <Image
+                      src={character.image}
+                      alt={character.name}
+                      fill
+                      className="rounded-lg object-cover"
+                      priority
+                    />
+                    <div className="absolute top-2 right-2 z-10">
+                      <FavoriteButton characterId={characterId} />
                     </div>
-                  )}
-                  <div>
-                    <span className="text-muted-foreground">Species:</span>{" "}
-                    <span>{character.species}</span>
                   </div>
-                  <div>
-                    <span className="text-muted-foreground">Created:</span>{" "}
-                    <span>{new Date(character.created).toLocaleDateString()}</span>
+                </div>
+
+                <div className="text-[#98fffd] space-y-6">
+                  <div className="flex justify-between items-start">
+                    <h1 className="text-3xl font-bold mb-4 text-[#00ffd1]">
+                      {character.name}
+                    </h1>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h2 className="text-xl font-semibold mb-2 text-[#00ffd1]">
+                        Status
+                      </h2>
+                      <Badge
+                        variant="outline"
+                        className="text-[#98fffd] border-[#98fffd]"
+                      >
+                        {character.status}
+                      </Badge>
+                    </div>
+
+                    <Separator className="border-[#00ffd1]" />
+
+                    <div>
+                      <h2 className="text-xl font-semibold mb-2 text-[#00ffd1]">
+                        Species
+                      </h2>
+                      <p>{character.species}</p>
+                    </div>
+
+                    <Separator className="border-[#00ffd1]" />
+
+                    <div>
+                      <h2 className="text-xl font-semibold mb-2 text-[#00ffd1]">
+                        Gender
+                      </h2>
+                      <p>{character.gender}</p>
+                    </div>
+
+                    <Separator className="border-[#00ffd1]" />
+
+                    <div>
+                      <h2 className="text-xl font-semibold mb-2 text-[#00ffd1]">
+                        Origin
+                      </h2>
+                      <p>{character.origin.name}</p>
+                    </div>
+
+                    <Separator className="border-[#00ffd1]" />
+
+                    <div>
+                      <h2 className="text-xl font-semibold mb-2 text-[#00ffd1]">
+                        Last Known Location
+                      </h2>
+                      <p>{character.location.name}</p>
+                    </div>
+
+                    <Separator className="border-[#00ffd1]" />
+
+                    <div>
+                      <h2 className="text-xl font-semibold mb-2 text-[#00ffd1]">
+                        Episodes
+                      </h2>
+                      <div className="flex flex-wrap gap-2">
+                        {episodeNumbers.map((epNum) => (
+                          <Badge
+                            key={epNum}
+                            variant="outline"
+                            className="text-[#98fffd] border-[#98fffd]"
+                          >
+                            Episode {epNum}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              <Separator />
-
-              <div>
-                <h3 className="font-semibold text-lg mb-2">Episodes</h3>
-                <div className="flex flex-wrap gap-2">
-                  {episodeNumbers.map((epNum: string) => (
-                    <Badge key={epNum} variant="outline" className="text-xs">
-                      Episode {epNum}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
   } catch (error) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold mb-4">Character Not Found</h1>
-        <p className="mb-6">
-          Sorry, we couldn&apos;t find the character you&apos;re looking for.
-        </p>
+        <h1 className="text-2xl font-bold mb-4 text-[#00ffd1]">Character Not Found</h1>
+        <p className="mb-6 text-[#98fffd]">Sorry, we couldn't find that character.</p>
         <Link href="/" passHref>
-          <Button>
+          <Button className="text-[#00ffd1] border-[#00ffd1] hover:bg-[#00ffd1] hover:text-black">
             <ChevronLeft className="mr-2 h-4 w-4" />
             Back to Characters
           </Button>

@@ -1,44 +1,44 @@
 "use client";
 
-import { useState, useTransition } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Search, X } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Search, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function SearchInput() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('name') || '');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("name") || "");
   const [isPending, startTransition] = useTransition();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const params = new URLSearchParams(searchParams.toString());
-    
+
     // Update or remove name parameter
     if (searchQuery) {
-      params.set('name', searchQuery);
+      params.set("name", searchQuery);
     } else {
-      params.delete('name');
+      params.delete("name");
     }
-    
+
     // Reset to page 1 when searching
-    params.delete('page');
-    
+    params.delete("page");
+
     startTransition(() => {
       router.push(`/?${params.toString()}`);
     });
   };
 
   const clearSearch = () => {
-    setSearchQuery('');
-    
+    setSearchQuery("");
+
     const params = new URLSearchParams(searchParams.toString());
-    params.delete('name');
-    params.delete('page');
-    
+    params.delete("name");
+    params.delete("page");
+
     startTransition(() => {
       router.push(`/?${params.toString()}`);
     });
@@ -49,29 +49,29 @@ export default function SearchInput() {
       <Input
         type="text"
         placeholder="Search characters..."
-        className="pr-10"
+        className="pr-10 border-[#00ffd1]/20 bg-[#0a0a0a] text-[#98fffd] placeholder:text-[#98fffd]/50 focus-visible:ring-[#00ffd1]/30 hover:border-[#00ffd1]/40"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      
+
       {searchQuery && (
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          className="absolute right-8 hover:bg-transparent"
+          className="absolute right-8 hover:bg-transparent text-[#98fffd] hover:text-[#ffffff]"
           onClick={clearSearch}
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Clear search</span>
         </Button>
       )}
-      
-      <Button 
-        type="submit" 
-        variant="ghost" 
-        size="sm" 
-        className="absolute right-0"
+
+      <Button
+        type="submit"
+        variant="ghost"
+        size="sm"
+        className="absolute right-0 text-[#98fffd] hover:text-[#ffffff]"
         disabled={isPending}
       >
         <Search className="h-4 w-4" />

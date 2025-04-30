@@ -43,40 +43,41 @@ export default async function Home({ searchParams }: HomeProps) {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 bg-[#0a0a0a]">
       <div className="mb-8 max-w-3xl mx-auto text-center">
         <Image
-          src="logo.png"
-          alt="Rick and Morty Logo"
-          width={500}
-          height={100}
-          className="mx-auto mb-4"
+          src="/logo.png"
+          alt="Ricklepedia Logo"
+          width={400}
+          height={150}
+          className="mx-auto mb-6"
+          priority
         />
-        <p className="text-muted-foreground text-lg mb-6">
-          Explore all characters from the Rick and Morty multiverse
+        <p className="text-lg text-[#98fffd] mb-8 font-mono italic">
+          Because the Citadel doesn&apos;t keep records — but we do!
         </p>
-        <div className="flex justify-center mb-6">
-          <SearchInput />
-        </div>
       </div>
 
-      <div className="mb-6">
+      <div className="max-w-4xl mx-auto mb-8 flex items-center justify-center">
+        <SearchInput />
+      </div>
+
+      <div className="mb-8">
         <CharacterFilters />
       </div>
 
-      <Suspense fallback={<PortalLoader className="py-20" />}>
-        {error ? (
-          <div className="text-center py-10">
-            <div className="text-destructive text-xl font-semibold mb-2">Error</div>
-            <p className="text-muted-foreground">{error}</p>
+      {error ? (
+        <div className="text-center py-10">
+          <p className="text-red-500">{error}</p>
+        </div>
+      ) : (
+        <Suspense fallback={<PortalLoader />}>
+          <CharacterGrid characters={characters} />
+          <div className="mt-8">
+            <Pagination currentPage={currentPage} totalPages={totalPages} />
           </div>
-        ) : (
-          <>
-            <CharacterGrid characters={characters} />
-            <Pagination totalPages={totalPages} currentPage={currentPage} />
-          </>
-        )}
-      </Suspense>
+        </Suspense>
+      )}
     </div>
   );
 }
