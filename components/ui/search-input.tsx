@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -11,22 +11,29 @@ export default function SearchInput() {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get("name") || "");
   const [isPending, startTransition] = useTransition();
+  const previousSearchRef = useRef(searchQuery);
 
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
+      // Only update if the search query has changed
+      if (searchQuery !== previousSearchRef.current) {
+        previousSearchRef.current = searchQuery;
 
-      if (searchQuery) {
-        params.set("name", searchQuery);
-      } else {
-        params.delete("name");
+        const params = new URLSearchParams(searchParams.toString());
+
+        if (searchQuery) {
+          params.set("name", searchQuery);
+        } else {
+          params.delete("name");
+        }
+
+        // Only reset page when search query changes
+        params.delete("page");
+
+        startTransition(() => {
+          router.push(`/?${params.toString()}`);
+        });
       }
-
-      params.delete("page");
-
-      startTransition(() => {
-        router.push(`/?${params.toString()}`);
-      });
     }, 500);
 
     return () => clearTimeout(debounceTimeout);
@@ -34,6 +41,7 @@ export default function SearchInput() {
 
   const clearSearch = () => {
     setSearchQuery("");
+    previousSearchRef.current = "";
 
     const params = new URLSearchParams(searchParams.toString());
     params.delete("name");
