@@ -101,6 +101,20 @@ export default function CharacterCard({ character }: CharacterCardProps) {
               {character.type}
             </Badge>
           )}
+          <Badge
+            variant="outline"
+            className="text-xs border-[#98fffd] text-[#98fffd] cursor-pointer hover:bg-[#98fffd]/10"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const firstEpisodeId = character.episode[0].split("/").pop();
+              window.location.href = `/episodes/${firstEpisodeId}`;
+            }}
+          >
+            {`${character.episode.length} Episode${
+              character.episode.length !== 1 ? "s" : ""
+            }`}
+          </Badge>
         </CardFooter>
       </Card>
     </Link>

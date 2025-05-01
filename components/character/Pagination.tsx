@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 interface PaginationProps {
   totalPages: number;
   currentPage: number;
+  baseUrl?: string;
 }
 
-export default function Pagination({ totalPages, currentPage }: PaginationProps) {
+export default function Pagination({ totalPages, currentPage, baseUrl = "/" }: PaginationProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -22,7 +23,9 @@ export default function Pagination({ totalPages, currentPage }: PaginationProps)
       params.set("page", page.toString());
     }
 
-    router.push(`/?${params.toString()}`);
+    const queryString = params.toString();
+    const path = baseUrl + (queryString ? `?${queryString}` : "");
+    router.push(path);
   };
 
   // Generate page numbers to display

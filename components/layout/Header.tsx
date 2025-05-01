@@ -54,6 +54,12 @@ export default function Header() {
             Characters
           </Link>
           <Link
+            href="/episodes"
+            className="text-[#98fffd] hover:text-[#ffffff] transition-colors text-sm font-medium"
+          >
+            Episodes
+          </Link>
+          <Link
             href="/favorites"
             className="text-[#98fffd] hover:text-[#ffffff] transition-colors text-sm font-medium"
           >
@@ -95,6 +101,13 @@ export default function Header() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Characters
+            </Link>
+            <Link
+              href="/episodes"
+              className="py-2 text-[#98fffd] hover:text-[#ffffff] transition-colors text-sm font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Episodes
             </Link>
             <Link
               href="/favorites"
