@@ -50,13 +50,13 @@ export default function CharacterCard({ character }: CharacterCardProps) {
 
   return (
     <Link href={`/character/${character.id}`} passHref>
-      <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group border-[#00ffd1]/20 bg-[#0a0a0a] hover:border-[#00ffd1]/40">
-        <div className="relative aspect-square overflow-hidden">
+      <Card className="group relative h-full overflow-hidden border border-[#00ffd1] bg-[#0a0a0a] transition-all duration-300 hover:scale-105">
+        <div className="relative aspect-square w-full">
           <Image
             src={character.image}
             alt={character.name}
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
             className="object-cover transition-transform duration-700 group-hover:scale-110"
             priority
           />
@@ -74,22 +74,22 @@ export default function CharacterCard({ character }: CharacterCardProps) {
             />
           </Button>
         </div>
-        <CardContent className="pt-4">
-          <h3 className="font-bold text-lg line-clamp-1 text-[#00ffd1]">
+        <CardContent className="p-3 sm:p-4">
+          <h3 className="font-bold text-base sm:text-lg line-clamp-1 text-[#00ffd1]">
             {character.name}
           </h3>
           <div className="flex items-center mt-2">
             <span
-              className={`h-2.5 w-2.5 rounded-full mr-2 ${getStatusColor(
+              className={`h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full mr-2 ${getStatusColor(
                 character.status
               )}`}
             ></span>
-            <span className="text-sm text-[#98fffd]">
+            <span className="text-xs sm:text-sm text-[#98fffd]">
               {character.status} - {character.species}
             </span>
           </div>
         </CardContent>
-        <CardFooter className="flex flex-wrap gap-2 pt-0">
+        <CardFooter className="flex flex-wrap gap-2 p-3 pt-0 sm:p-4 sm:pt-0">
           <Badge
             variant="secondary"
             className="text-xs bg-[#00ffd1]/10 text-[#00ffd1] hover:bg-[#00ffd1]/20"
@@ -97,7 +97,10 @@ export default function CharacterCard({ character }: CharacterCardProps) {
             {character.gender}
           </Badge>
           {character.type && (
-            <Badge variant="outline" className="text-xs border-[#98fffd] text-[#98fffd]">
+            <Badge
+              variant="outline"
+              className="text-xs border-[#98fffd] text-[#98fffd]"
+            >
               {character.type}
             </Badge>
           )}

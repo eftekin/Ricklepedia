@@ -71,13 +71,13 @@ export default function CharacterFilters() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 items-end">
+    <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2 text-[#98fffd]">
         <Filter className="h-4 w-4" />
         <span className="text-sm font-medium">Filters:</span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1">
+      <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3">
         <Select
           value={filters.status}
           onValueChange={(value) => handleFilterChange("status", value)}
@@ -223,12 +223,12 @@ export default function CharacterFilters() {
       <Button
         variant="ghost"
         onClick={clearFilters}
+        className="self-end whitespace-nowrap text-[#98fffd] hover:text-[#ffffff] hover:bg-[#00ffd1]/10 disabled:text-[#98fffd]/50"
         disabled={
           filters.status === "all" &&
           filters.species === "all" &&
           filters.gender === "all"
         }
-        className="whitespace-nowrap text-[#98fffd] hover:text-[#ffffff] hover:bg-[#00ffd1]/10 disabled:text-[#98fffd]/50"
       >
         Clear Filters
       </Button>

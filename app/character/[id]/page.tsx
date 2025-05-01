@@ -79,9 +79,9 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
 
           <Card className="border border-[#00ffd1] bg-[#0a0a0a] shadow-lg">
             <CardContent className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
                 <div className="flex justify-center md:justify-start">
-                  <div className="relative w-full max-w-[300px] aspect-square">
+                  <div className="relative w-full max-w-[300px] md:max-w-[400px] lg:max-w-[500px] aspect-square">
                     <Image
                       src={character.image}
                       alt={character.name}
@@ -90,7 +90,10 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
                       priority
                     />
                     <div className="absolute top-2 right-2 z-10">
-                      <FavoriteButton characterId={characterId} />
+                      <FavoriteButton
+                        characterId={characterId}
+                        characterName={character.name}
+                      />
                     </div>
                   </div>
                 </div>
@@ -158,7 +161,7 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
                         Episodes
                       </h2>
                       <div className="flex flex-wrap gap-2">
-                        {episodeNumbers.map((epNum) => (
+                        {episodeNumbers.map((epNum: string) => (
                           <Badge
                             key={epNum}
                             variant="outline"
@@ -181,7 +184,9 @@ export default async function CharacterPage({ params }: CharacterPageProps) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-2xl font-bold mb-4 text-[#00ffd1]">Character Not Found</h1>
-        <p className="mb-6 text-[#98fffd]">Sorry, we couldn't find that character.</p>
+        <p className="mb-6 text-[#98fffd]">
+          Sorry, we couldn&apos;t find that character.
+        </p>
         <Link href="/" passHref>
           <Button className="text-[#00ffd1] border-[#00ffd1] hover:bg-[#00ffd1] hover:text-black">
             <ChevronLeft className="mr-2 h-4 w-4" />
