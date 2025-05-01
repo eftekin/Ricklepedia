@@ -1,10 +1,10 @@
 export interface Character {
   id: number;
   name: string;
-  status: 'Alive' | 'Dead' | 'unknown';
+  status: "Alive" | "Dead" | "unknown";
   species: string;
   type: string;
-  gender: 'Female' | 'Male' | 'Genderless' | 'unknown';
+  gender: "Female" | "Male" | "Genderless" | "unknown";
   origin: {
     name: string;
     url: string;
@@ -33,10 +33,10 @@ export type CharacterApiResponse = ApiResponse<Character>;
 
 export interface SearchParams {
   name?: string;
-  status?: 'alive' | 'dead' | 'unknown';
+  status?: "alive" | "dead" | "unknown";
   species?: string;
   type?: string;
-  gender?: 'female' | 'male' | 'genderless' | 'unknown';
+  gender?: "female" | "male" | "genderless" | "unknown";
   page?: number;
 }
 
@@ -45,3 +45,15 @@ export interface CharacterFilters {
   species: string;
   gender: string;
 }
+
+export interface Episode {
+  id: number;
+  name: string;
+  air_date: string;
+  episode: string;
+  characters: string[];
+  url: string;
+  created: string;
+}
+
+export type EpisodeApiResponse = ApiResponse<Episode>;

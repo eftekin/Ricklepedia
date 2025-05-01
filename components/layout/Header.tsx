@@ -71,11 +71,6 @@ export default function Header() {
           >
             About
           </Link>
-          <Link href="/" passHref>
-            <Button className="bg-[#00ffd1] text-black hover:bg-[#98fffd] transition-colors">
-              Browse Characters
-            </Button>
-          </Link>
         </nav>
 
         {/* Mobile Menu Button */}
