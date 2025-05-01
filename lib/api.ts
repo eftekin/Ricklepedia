@@ -19,7 +19,13 @@ export async function getCharacters(
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error(`API request failed with status ${response.status}`);
+    if (response.status === 404) {
+      throw new Error(
+        "Oops! Looks like this one got lost in the multiverse (404 Not Found)"
+      );
+    } else {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
   }
 
   return response.json();
@@ -29,7 +35,13 @@ export async function getCharacter(id: number): Promise<any> {
   const response = await fetch(`${API_BASE_URL}/character/${id}`);
 
   if (!response.ok) {
-    throw new Error(`API request failed with status ${response.status}`);
+    if (response.status === 404) {
+      throw new Error(
+        "Oops! Looks like this one got lost in the multiverse (404 Not Found)"
+      );
+    } else {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
   }
 
   return response.json();
@@ -44,13 +56,29 @@ export async function searchCharacters(
 
 export async function getEpisodes(page = 1) {
   const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${page}`);
-  if (!response.ok) throw new Error("Failed to fetch episodes");
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(
+        "Oops! Looks like this one got lost in the multiverse (404 Not Found)"
+      );
+    } else {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+  }
   return response.json();
 }
 
 export async function getEpisode(id: string) {
   const response = await fetch(`https://rickandmortyapi.com/api/episode/${id}`);
-  if (!response.ok) throw new Error("Failed to fetch episode");
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(
+        "Oops! Looks like this one got lost in the multiverse (404 Not Found)"
+      );
+    } else {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+  }
   return response.json();
 }
 
@@ -58,6 +86,14 @@ export async function getMultipleCharacters(ids: number[]) {
   const response = await fetch(
     `https://rickandmortyapi.com/api/character/${ids.join(",")}`
   );
-  if (!response.ok) throw new Error("Failed to fetch characters");
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(
+        "Oops! Looks like this one got lost in the multiverse (404 Not Found)"
+      );
+    } else {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+  }
   return response.json();
 }

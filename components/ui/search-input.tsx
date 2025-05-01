@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -12,25 +12,25 @@ export default function SearchInput() {
   const [searchQuery, setSearchQuery] = useState(searchParams.get("name") || "");
   const [isPending, startTransition] = useTransition();
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    const debounceTimeout = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
 
-    const params = new URLSearchParams(searchParams.toString());
+      if (searchQuery) {
+        params.set("name", searchQuery);
+      } else {
+        params.delete("name");
+      }
 
-    // Update or remove name parameter
-    if (searchQuery) {
-      params.set("name", searchQuery);
-    } else {
-      params.delete("name");
-    }
+      params.delete("page");
 
-    // Reset to page 1 when searching
-    params.delete("page");
+      startTransition(() => {
+        router.push(`/?${params.toString()}`);
+      });
+    }, 500);
 
-    startTransition(() => {
-      router.push(`/?${params.toString()}`);
-    });
-  };
+    return () => clearTimeout(debounceTimeout);
+  }, [searchQuery, searchParams, router]);
 
   const clearSearch = () => {
     setSearchQuery("");
@@ -45,7 +45,7 @@ export default function SearchInput() {
   };
 
   return (
-    <form onSubmit={handleSearch} className="relative flex w-full max-w-sm items-center">
+    <div className="relative flex w-full max-w-sm items-center">
       <Input
         type="text"
         placeholder="Search characters..."
@@ -68,7 +68,7 @@ export default function SearchInput() {
       )}
 
       <Button
-        type="submit"
+        type="button"
         variant="ghost"
         size="sm"
         className="absolute right-0 text-[#98fffd] hover:text-[#ffffff]"
@@ -77,6 +77,6 @@ export default function SearchInput() {
         <Search className="h-4 w-4" />
         <span className="sr-only">Search</span>
       </Button>
-    </form>
+    </div>
   );
 }
