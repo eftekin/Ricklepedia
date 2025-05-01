@@ -27,7 +27,7 @@ To get this portal running in your dimension:
 
 ```bash
 # Clone this repository
-git clone https://github.com/yourusername/Ricklepedia.git
+git clone https://github.com/eftekin/Ricklepedia.git
 
 # Navigate to the project directory
 cd Ricklepedia
