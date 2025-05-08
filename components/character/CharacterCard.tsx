@@ -50,41 +50,44 @@ export default function CharacterCard({ character }: CharacterCardProps) {
 
   return (
     <Link href={`/character/${character.id}`} passHref>
-      <Card className="group relative h-full overflow-hidden border border-[#00ffd1] bg-[#0a0a0a] transition-all duration-300 hover:scale-105">
-        <div className="relative aspect-square w-full">
+      <Card className="group relative h-full overflow-hidden border border-[#00ffd1] bg-gradient-to-b from-[#0a0a0a] to-[#0f1a1a] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(0,255,209,0.3)]">
+        <div className="relative aspect-square w-full overflow-hidden">
           <Image
             src={character.image}
             alt={character.name}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
             priority
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-2 right-2 bg-[#0a0a0a]/30 backdrop-blur-sm hover:bg-[#0a0a0a]/50 z-10"
+            className="absolute top-2 right-2 bg-[#0a0a0a]/30 backdrop-blur-sm hover:bg-[#0a0a0a]/50 z-10 transition-all duration-300 hover:scale-110"
             onClick={handleFavoriteToggle}
           >
             <Heart
               className={cn(
-                "h-5 w-5 transition-colors",
-                isFav ? "fill-red-500 text-red-500" : "fill-transparent text-[#98fffd]"
+                "h-5 w-5 transition-all duration-300",
+                isFav
+                  ? "fill-red-500 text-red-500 scale-110"
+                  : "fill-transparent text-[#98fffd]"
               )}
             />
           </Button>
         </div>
         <CardContent className="p-3 sm:p-4">
-          <h3 className="font-bold text-base sm:text-lg line-clamp-1 text-[#00ffd1]">
+          <h3 className="font-bold text-base sm:text-lg line-clamp-1 text-[#00ffd1] group-hover:text-[#00ff9f] transition-colors duration-300">
             {character.name}
           </h3>
           <div className="flex items-center mt-2">
             <span
               className={`h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full mr-2 ${getStatusColor(
                 character.status
-              )}`}
+              )} animate-pulse`}
             ></span>
-            <span className="text-xs sm:text-sm text-[#98fffd]">
+            <span className="text-xs sm:text-sm text-[#98fffd] group-hover:text-white transition-colors duration-300">
               {character.status} - {character.species}
             </span>
           </div>
@@ -92,21 +95,21 @@ export default function CharacterCard({ character }: CharacterCardProps) {
         <CardFooter className="flex flex-wrap gap-2 p-3 pt-0 sm:p-4 sm:pt-0">
           <Badge
             variant="secondary"
-            className="text-xs bg-[#00ffd1]/10 text-[#00ffd1] hover:bg-[#00ffd1]/20"
+            className="text-xs bg-[#00ffd1]/10 text-[#00ffd1] hover:bg-[#00ffd1]/20 transition-colors duration-300"
           >
             {character.gender}
           </Badge>
           {character.type && (
             <Badge
               variant="outline"
-              className="text-xs border-[#98fffd] text-[#98fffd]"
+              className="text-xs border-[#98fffd] text-[#98fffd] hover:bg-[#98fffd]/10 transition-colors duration-300"
             >
               {character.type}
             </Badge>
           )}
           <Badge
             variant="outline"
-            className="text-xs border-[#98fffd] text-[#98fffd] cursor-pointer hover:bg-[#98fffd]/10"
+            className="text-xs border-[#98fffd] text-[#98fffd] cursor-pointer hover:bg-[#98fffd]/10 transition-colors duration-300"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();

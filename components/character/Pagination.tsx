@@ -10,7 +10,11 @@ interface PaginationProps {
   baseUrl?: string;
 }
 
-export default function Pagination({ totalPages, currentPage, baseUrl = "/" }: PaginationProps) {
+export default function Pagination({
+  totalPages,
+  currentPage,
+  baseUrl = "/",
+}: PaginationProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
