@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -46,13 +46,13 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
-    "eslint": "8.49.0",
-    "eslint-config-next": "13.5.1",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.2.11",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.446.0",
-    "next": "14.2.26",
+    "next": "^16.2.11",
     "next-themes": "^0.3.0",
-    "postcss": "8.5.3",
+    "postcss": "8.5.22",
     "react": "18.2.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "18.2.0",
@@ -70,5 +70,9 @@
     "@types/node": "22.15.3",
     "@types/react": "18.3.20",
     "typescript": "5.8.3"
+  },
+  "overrides": {
+    "postcss": "8.5.22",
+    "sharp": "0.35.3"
   }
 }
