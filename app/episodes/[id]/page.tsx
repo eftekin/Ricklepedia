@@ -2,9 +2,9 @@ import { getEpisodes } from "@/lib/api";
 import EpisodeContent from "./episode-content";
 
 interface EpisodePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateStaticParams() {
@@ -31,6 +31,7 @@ export async function generateStaticParams() {
   }
 }
 
-export default function EpisodePage({ params }: EpisodePageProps) {
-  return <EpisodeContent episodeId={params.id} />;
+export default async function EpisodePage({ params }: EpisodePageProps) {
+  const { id } = await params;
+  return <EpisodeContent episodeId={id} />;
 }
