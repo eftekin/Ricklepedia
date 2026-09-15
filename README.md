@@ -15,7 +15,7 @@ Ricklepedia is a Next.js-powered portal into the Rick and Morty universe, where 
 
 ## Tech Stack
 
-- Next.js 14
+- Next.js 16
 - Tailwind CSS
 - Shadcn UI
 - Rick and Morty API

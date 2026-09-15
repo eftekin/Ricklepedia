@@ -9,25 +9,31 @@ import { SearchParams, Character } from "@/types";
 import Image from "next/image";
 
 interface HomeProps {
-  searchParams: {
+  searchParams: Promise<{
     name?: string;
     status?: string;
     species?: string;
     gender?: string;
     page?: string;
-  };
+  }>;
 }
 
 export default async function Home({ searchParams }: HomeProps) {
-  const currentPage = searchParams.page ? parseInt(searchParams.page) : 1;
+  const resolvedSearchParams = await searchParams;
+  const currentPage = resolvedSearchParams.page
+    ? parseInt(resolvedSearchParams.page)
+    : 1;
 
   // Prepare API parameters
   const apiParams: SearchParams = {};
 
-  if (searchParams.name) apiParams.name = searchParams.name;
-  if (searchParams.status) apiParams.status = searchParams.status as any;
-  if (searchParams.species) apiParams.species = searchParams.species;
-  if (searchParams.gender) apiParams.gender = searchParams.gender as any;
+  if (resolvedSearchParams.name) apiParams.name = resolvedSearchParams.name;
+  if (resolvedSearchParams.status)
+    apiParams.status = resolvedSearchParams.status as any;
+  if (resolvedSearchParams.species)
+    apiParams.species = resolvedSearchParams.species;
+  if (resolvedSearchParams.gender)
+    apiParams.gender = resolvedSearchParams.gender as any;
   if (currentPage) apiParams.page = currentPage;
 
   let characters: Character[] = [];

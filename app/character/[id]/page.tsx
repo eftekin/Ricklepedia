@@ -10,9 +10,9 @@ import { Separator } from "@/components/ui/separator";
 import FavoriteButton from "./favorite-button";
 
 interface CharacterPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateStaticParams() {
@@ -40,7 +40,8 @@ export async function generateStaticParams() {
 }
 
 export default async function CharacterPage({ params }: CharacterPageProps) {
-  const characterId = parseInt(params.id);
+  const { id } = await params;
+  const characterId = parseInt(id);
 
   if (isNaN(characterId)) {
     return (
