@@ -70,5 +70,10 @@
     "@types/node": "22.15.3",
     "@types/react": "18.3.20",
     "typescript": "5.8.3"
+  },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.1"
+    }
   }
 }
