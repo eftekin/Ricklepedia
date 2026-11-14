@@ -1,4 +1,4 @@
-import { CharacterApiResponse, SearchParams } from "@/types";
+import { Character, CharacterApiResponse, Episode, EpisodeApiResponse, SearchParams } from "@/types";
 
 const API_BASE_URL = "https://rickandmortyapi.com/api";
 
@@ -55,7 +55,8 @@ export async function searchCharacters(
 }
 
 export async function getEpisodes(page = 1) {
-  const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${page}`);
+  // the episode list is frozen at season 5, so one copy a day serves every page and the build
+  const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${page}`, { next: { revalidate: 86400 } });
   if (!response.ok) {
     if (response.status === 404) {
       throw new Error(
@@ -97,3 +98,28 @@ export async function getMultipleCharacters(ids: number[]) {
   }
   return response.json();
 }
+
+// the API answers a one-id list with a bare object
+const asArray = <T,>(data: T | T[]): T[] => (Array.isArray(data) ? data : [data]);
+
+export async function getCharactersByIds(ids: number[]): Promise<Character[]> {
+  if (ids.length === 0) return [];
+  return asArray(await getMultipleCharacters(ids));
+}
+
+export async function getEpisodesByIds(ids: number[]): Promise<Episode[]> {
+  if (ids.length === 0) return [];
+  const response = await fetch(`${API_BASE_URL}/episode/${ids.join(",")}`);
+  if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+  return asArray(await response.json());
+}
+
+export async function getAllEpisodes(): Promise<Episode[]> {
+  const first: EpisodeApiResponse = await getEpisodes(1);
+  const rest: EpisodeApiResponse[] = await Promise.all(
+    Array.from({ length: first.info.pages - 1 }, (_, i) => getEpisodes(i + 2))
+  );
+  return [first, ...rest].flatMap((page) => page.results);
+}
+
+export const idFromUrl = (url: string) => Number(url.split("/").pop());

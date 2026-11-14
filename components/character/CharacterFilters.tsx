@@ -1,237 +1,119 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Filter } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { CharacterFilters } from "@/types";
+
+const STATUSES = [
+  { value: "", label: "All" },
+  { value: "alive", label: "Alive" },
+  { value: "dead", label: "Dead" },
+  { value: "unknown", label: "Unknown" },
+];
+const SPECIES = ["human", "alien", "humanoid", "poopybutthole", "mythological", "robot", "animal", "cronenberg"];
+const GENDERS = ["female", "male", "genderless", "unknown"];
+const title = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export default function CharacterFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [name, setName] = useState(searchParams.get("name") || "");
+  const lastName = useRef(name);
 
-  const [filters, setFilters] = useState<CharacterFilters>({
-    status: searchParams.get("status") || "all",
-    species: searchParams.get("species") || "all",
-    gender: searchParams.get("gender") || "all",
-  });
-
-  const handleFilterChange = (key: keyof CharacterFilters, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-
+  // any filter change starts again from page 1
+  const update = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-
-    if (value && value !== "all") {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
-
-    // Keep page param if it exists and is not 1
-    if (searchParams.has("page") && searchParams.get("page") !== "1") {
-      params.set("page", searchParams.get("page")!);
-    } else {
-      params.delete("page");
-    }
-
-    // Keep search query if it exists
-    if (searchParams.has("name")) {
-      params.set("name", searchParams.get("name")!);
-    }
-
-    router.push(`/?${params.toString()}`);
+    if (value) params.set(key, value);
+    else params.delete(key);
+    params.delete("page");
+    const query = params.toString();
+    router.push(query ? `/?${query}#cast` : "/#cast", { scroll: false });
   };
 
-  const clearFilters = () => {
-    setFilters({
-      status: "all",
-      species: "all",
-      gender: "all",
-    });
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (name !== lastName.current) {
+        lastName.current = name;
+        update("name", name.trim());
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name]);
 
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("status");
-    params.delete("species");
-    params.delete("gender");
-
-    // Keep search query if it exists
-    if (searchParams.has("name")) {
-      params.set("name", searchParams.get("name")!);
-      router.push(`/?${params.toString()}`);
-    } else {
-      router.push("/");
-    }
-  };
+  const status = searchParams.get("status") || "";
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2 text-[#98fffd]">
-        <Filter className="h-4 w-4" />
-        <span className="text-sm font-medium">Filters:</span>
+    <form className="filters" role="search" aria-label="Filter characters" onSubmit={(e) => e.preventDefault()}>
+      <div className="field field--grow">
+        <label className="label" htmlFor="f-name">
+          Name
+        </label>
+        <input
+          className="input"
+          id="f-name"
+          name="name"
+          type="search"
+          placeholder="Birdperson"
+          autoComplete="off"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
       </div>
-
-      <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3">
-        <Select
-          value={filters.status}
-          onValueChange={(value) => handleFilterChange("status", value)}
+      <fieldset className="field">
+        <legend className="label">Status</legend>
+        <div className="chips">
+          {STATUSES.map((s) => (
+            <label className="chip" key={s.value || "all"}>
+              <input
+                type="radio"
+                name="status"
+                value={s.value}
+                checked={status === s.value}
+                onChange={() => update("status", s.value)}
+              />
+              {s.label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <div className="field">
+        <label className="label" htmlFor="f-species">
+          Species
+        </label>
+        <select
+          className="select"
+          id="f-species"
+          name="species"
+          value={searchParams.get("species") || ""}
+          onChange={(e) => update("species", e.target.value)}
         >
-          <SelectTrigger className="border-[#00ffd1]/20 hover:border-[#00ffd1]/40 bg-[#0a0a0a] text-[#98fffd]">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent className="bg-[#0a0a0a] border-[#00ffd1]/20">
-            <SelectItem
-              value="all"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              All Statuses
-            </SelectItem>
-            <SelectItem
-              value="alive"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Alive
-            </SelectItem>
-            <SelectItem
-              value="dead"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Dead
-            </SelectItem>
-            <SelectItem
-              value="unknown"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Unknown
-            </SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={filters.species}
-          onValueChange={(value) => handleFilterChange("species", value)}
-        >
-          <SelectTrigger className="border-[#00ffd1]/20 hover:border-[#00ffd1]/40 bg-[#0a0a0a] text-[#98fffd]">
-            <SelectValue placeholder="Species" />
-          </SelectTrigger>
-          <SelectContent className="bg-[#0a0a0a] border-[#00ffd1]/20">
-            <SelectItem
-              value="all"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              All Species
-            </SelectItem>
-            <SelectItem
-              value="human"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Human
-            </SelectItem>
-            <SelectItem
-              value="alien"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Alien
-            </SelectItem>
-            <SelectItem
-              value="humanoid"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Humanoid
-            </SelectItem>
-            <SelectItem
-              value="poopybutthole"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Poopybutthole
-            </SelectItem>
-            <SelectItem
-              value="mythological"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Mythological
-            </SelectItem>
-            <SelectItem
-              value="robot"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Robot
-            </SelectItem>
-            <SelectItem
-              value="animal"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Animal
-            </SelectItem>
-            <SelectItem
-              value="cronenberg"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Cronenberg
-            </SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={filters.gender}
-          onValueChange={(value) => handleFilterChange("gender", value)}
-        >
-          <SelectTrigger className="border-[#00ffd1]/20 hover:border-[#00ffd1]/40 bg-[#0a0a0a] text-[#98fffd]">
-            <SelectValue placeholder="Gender" />
-          </SelectTrigger>
-          <SelectContent className="bg-[#0a0a0a] border-[#00ffd1]/20">
-            <SelectItem
-              value="all"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              All Genders
-            </SelectItem>
-            <SelectItem
-              value="female"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Female
-            </SelectItem>
-            <SelectItem
-              value="male"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Male
-            </SelectItem>
-            <SelectItem
-              value="genderless"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Genderless
-            </SelectItem>
-            <SelectItem
-              value="unknown"
-              className="text-[#98fffd] focus:bg-[#00ffd1]/10 focus:text-[#00ffd1]"
-            >
-              Unknown
-            </SelectItem>
-          </SelectContent>
-        </Select>
+          <option value="">Any</option>
+          {SPECIES.map((s) => (
+            <option key={s} value={s}>
+              {title(s)}
+            </option>
+          ))}
+        </select>
       </div>
-
-      <Button
-        variant="ghost"
-        onClick={clearFilters}
-        className="self-end whitespace-nowrap text-[#98fffd] hover:text-[#ffffff] hover:bg-[#00ffd1]/10 disabled:text-[#98fffd]/50"
-        disabled={
-          filters.status === "all" &&
-          filters.species === "all" &&
-          filters.gender === "all"
-        }
-      >
-        Clear Filters
-      </Button>
-    </div>
+      <div className="field">
+        <label className="label" htmlFor="f-gender">
+          Gender
+        </label>
+        <select
+          className="select"
+          id="f-gender"
+          name="gender"
+          value={searchParams.get("gender") || ""}
+          onChange={(e) => update("gender", e.target.value)}
+        >
+          <option value="">Any</option>
+          {GENDERS.map((g) => (
+            <option key={g} value={g}>
+              {title(g)}
+            </option>
+          ))}
+        </select>
+      </div>
+    </form>
   );
 }

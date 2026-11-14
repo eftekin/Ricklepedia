@@ -1,58 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Heart } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { toggleFavorite, isFavorite } from "@/lib/favorites";
-import { useToast } from "@/hooks/use-toast";
+import { useState, useSyncExternalStore } from "react";
+import { isFavorite, toggleFavorite } from "@/lib/favorites";
 
-interface FavoriteButtonProps {
-  characterId: number;
-  characterName: string;
-}
+const subscribe = (onChange: () => void) => {
+  window.addEventListener("storage", onChange);
+  return () => window.removeEventListener("storage", onChange);
+};
 
-export default function FavoriteButton({
-  characterId,
-  characterName,
-}: FavoriteButtonProps) {
-  const [isFav, setIsFav] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    setIsFav(isFavorite(characterId));
-    setIsLoaded(true);
-  }, [characterId]);
-
-  const handleFavoriteToggle = () => {
-    const newState = toggleFavorite(characterId);
-    setIsFav(newState);
-
-    toast({
-      title: newState ? "Added to favorites" : "Removed from favorites",
-      description: newState
-        ? `${characterName} has been added to your favorites.`
-        : `${characterName} has been removed from your favorites.`,
-      duration: 3000,
-    });
-  };
-
-  if (!isLoaded) return null;
+export default function FavoriteButton({ characterId }: { characterId: number }) {
+  // the server never knows the visitor's favorites, so it renders "not saved"
+  const [, rerender] = useState(0);
+  const isFav = useSyncExternalStore(subscribe, () => isFavorite(characterId), () => false);
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="bg-background/30 backdrop-blur-sm hover:bg-background/50"
-      onClick={handleFavoriteToggle}
+    <button
+      className="btn btn--primary"
+      type="button"
+      aria-pressed={isFav}
+      onClick={() => {
+        toggleFavorite(characterId);
+        rerender((n) => n + 1);
+      }}
     >
-      <Heart
-        className={cn(
-          "h-5 w-5 transition-colors",
-          isFav ? "fill-red-500 text-red-500" : "fill-transparent text-white"
-        )}
-      />
-    </Button>
+      {isFav ? "In favorites" : "Add to favorites"}
+    </button>
   );
 }
