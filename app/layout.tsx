@@ -1,32 +1,26 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { ThemeProvider } from "@/components/theme-provider";
+import { Rubik, Figtree } from "next/font/google";
 import Header from "@/components/layout/Header";
-import { Toaster } from "@/components/ui/toaster";
+import Footer from "@/components/layout/Footer";
 import { Analytics } from "@vercel/analytics/react";
 
-const inter = Inter({ subsets: ["latin"] });
+const rubik = Rubik({ subsets: ["latin"], weight: "800", variable: "--font-rubik" });
+const figtree = Figtree({ subsets: ["latin"], weight: ["500", "700"], variable: "--font-figtree" });
 
 export const metadata: Metadata = {
-  title: "Ricklepedia - Rick and Morty Character Explorer",
-  description: "Explore characters from the Rick and Morty universe",
+  title: "Ricklepedia",
+  description: "Every Rick and Morty character and episode from seasons 1 to 5, searchable.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`${inter.className} bg-[#0a0a0a]`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          forcedTheme="dark"
-        >
-          <Header />
-          <main className="min-h-screen pt-16">{children}</main>
-          <Toaster />
-        </ThemeProvider>
+    <html lang="en" className={`${rubik.variable} ${figtree.variable}`}>
+      <body>
+        <Header />
+        <main>{children}</main>
+        <Footer />
+        <Analytics />
       </body>
     </html>
   );

@@ -1,12 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
-import { getCharacter, getCharacters } from "@/lib/api";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { PortalLoader } from "@/components/ui/portal-loader";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { getAllEpisodes, getCharacter, getCharacters, idFromUrl } from "@/lib/api";
+import StatusPill from "@/components/character/StatusPill";
+import { Character, Episode } from "@/types";
 import FavoriteButton from "./favorite-button";
 
 interface CharacterPageProps {
@@ -24,8 +20,6 @@ export async function generateStaticParams() {
     while (hasNextPage) {
       const response = await getCharacters({ page: currentPage });
       allCharacters.push(...response.results);
-
-      // Check if there are more pages
       hasNextPage = response.info.next !== null;
       currentPage++;
     }
@@ -39,162 +33,122 @@ export async function generateStaticParams() {
   }
 }
 
+function NotFound({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="page wrap">
+      <Link className="back" href="/">
+        Back to all characters
+      </Link>
+      <div className="cel state">
+        <h1>{title}</h1>
+        <p>{text}</p>
+        <Link className="btn" href="/">
+          Browse characters
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+const label = (s: string) => (s === "unknown" ? "Unknown" : s);
+
 export default async function CharacterPage({ params }: CharacterPageProps) {
   const { id } = await params;
   const characterId = parseInt(id);
 
   if (isNaN(characterId)) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center text-[#00ffd1]">
-        <h1 className="text-2xl font-bold mb-4">Invalid Character ID</h1>
-        <p className="mb-6 text-[#98fffd]">The character ID must be a number.</p>
-        <Link href="/" passHref>
-          <Button className="text-[#00ffd1] border-[#00ffd1] hover:bg-[#00ffd1] hover:text-black">
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Back to Characters
-          </Button>
-        </Link>
-      </div>
-    );
+    return <NotFound title="That is not a character number" text="Character addresses end in a number, like /character/1." />;
   }
 
+  let character: Character;
   try {
-    const character = await getCharacter(characterId);
-    const episodeNumbers = character.episode
-      .map((ep: string) => {
-        const match = ep.match(/\/(\d+)$/);
-        return match ? match[1] : null;
-      })
-      .filter(Boolean);
+    character = await getCharacter(characterId);
+  } catch {
+    return <NotFound title="No record for this character" text="The archive has no character with that number. It holds 826." />;
+  }
 
-    return (
-      <div className="container mx-auto px-4 py-8 bg-[#0a0a0a] min-h-screen">
-        <div className="max-w-5xl mx-auto">
-          <Link
-            href="/"
-            className="inline-flex items-center mb-6 text-[#9cf7f7] hover:text-[#ffffff]"
-          >
-            <ChevronLeft className="mr-1 h-4 w-4" />
-            Back to Characters
-          </Link>
+  let episodes: Episode[] = [];
+  try {
+    const ids = new Set(character.episode.map(idFromUrl));
+    episodes = (await getAllEpisodes()).filter((e) => ids.has(e.id));
+  } catch {
+    episodes = [];
+  }
+  const count = character.episode.length;
 
-          <Card className="border border-[#00ffd1] bg-[#0a0a0a] shadow-lg">
-            <CardContent className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
-                <div className="flex justify-center md:justify-start">
-                  <div className="relative w-full max-w-[300px] md:max-w-[400px] lg:max-w-[500px] aspect-square">
-                    <Image
-                      src={character.image}
-                      alt={character.name}
-                      fill
-                      className="rounded-lg object-cover"
-                      priority
-                    />
-                    <div className="absolute top-2 right-2 z-10">
-                      <FavoriteButton
-                        characterId={characterId}
-                        characterName={character.name}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="text-[#98fffd] space-y-6">
-                  <div className="flex justify-between items-start">
-                    <h1 className="text-3xl font-bold mb-4 text-[#00ffd1]">
-                      {character.name}
-                    </h1>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div>
-                      <h2 className="text-xl font-semibold mb-2 text-[#00ffd1]">
-                        Status
-                      </h2>
-                      <Badge
-                        variant="outline"
-                        className="text-[#98fffd] border-[#98fffd]"
-                      >
-                        {character.status}
-                      </Badge>
-                    </div>
-
-                    <Separator className="border-[#00ffd1]" />
-
-                    <div>
-                      <h2 className="text-xl font-semibold mb-2 text-[#00ffd1]">
-                        Species
-                      </h2>
-                      <p>{character.species}</p>
-                    </div>
-
-                    <Separator className="border-[#00ffd1]" />
-
-                    <div>
-                      <h2 className="text-xl font-semibold mb-2 text-[#00ffd1]">
-                        Gender
-                      </h2>
-                      <p>{character.gender}</p>
-                    </div>
-
-                    <Separator className="border-[#00ffd1]" />
-
-                    <div>
-                      <h2 className="text-xl font-semibold mb-2 text-[#00ffd1]">
-                        Origin
-                      </h2>
-                      <p>{character.origin.name}</p>
-                    </div>
-
-                    <Separator className="border-[#00ffd1]" />
-
-                    <div>
-                      <h2 className="text-xl font-semibold mb-2 text-[#00ffd1]">
-                        Last Known Location
-                      </h2>
-                      <p>{character.location.name}</p>
-                    </div>
-
-                    <Separator className="border-[#00ffd1]" />
-
-                    <div>
-                      <h2 className="text-xl font-semibold mb-2 text-[#00ffd1]">
-                        Episodes
-                      </h2>
-                      <div className="flex flex-wrap gap-2">
-                        {episodeNumbers.map((epNum: string) => (
-                          <Badge
-                            key={epNum}
-                            variant="outline"
-                            className="text-[#98fffd] border-[#98fffd]"
-                          >
-                            Episode {epNum}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+  return (
+    <div className="page wrap">
+      <Link className="back" href="/">
+        Back to all characters
+      </Link>
+      <div className="dossier">
+        <div className="cel">
+          <Image className="portrait" src={character.image} alt="" width={300} height={300} priority />
+        </div>
+        <div className="record">
+          <h1>{character.name}</h1>
+          <div className="meta">
+            <StatusPill status={character.status} />
+          </div>
+          <dl className="facts cel">
+            <dt>Species</dt>
+            <dd>{character.species}</dd>
+            {character.type && (
+              <>
+                <dt>Type</dt>
+                <dd>{character.type}</dd>
+              </>
+            )}
+            <dt>Gender</dt>
+            <dd>{label(character.gender)}</dd>
+            <dt>Origin</dt>
+            <dd>{label(character.origin.name)}</dd>
+            <dt>Last seen</dt>
+            <dd>{label(character.location.name)}</dd>
+          </dl>
+          <p className="big-count">
+            In <span className="num">{count}</span>
+            {count === 1 ? "episode" : "episodes"}
+          </p>
+          <div>
+            <FavoriteButton characterId={characterId} />
+          </div>
         </div>
       </div>
-    );
-  } catch (error) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold mb-4 text-[#00ffd1]">Character Not Found</h1>
-        <p className="mb-6 text-[#98fffd]">
-          Sorry, we couldn&apos;t find that character.
-        </p>
-        <Link href="/" passHref>
-          <Button className="text-[#00ffd1] border-[#00ffd1] hover:bg-[#00ffd1] hover:text-black">
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Back to Characters
-          </Button>
-        </Link>
-      </div>
-    );
-  }
+
+      <section className="section" aria-labelledby="eps-title">
+        <div className="section-head">
+          <h2 id="eps-title">Episodes</h2>
+        </div>
+        {episodes.length > 0 ? (
+          <div className="cel table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Episode</th>
+                  <th scope="col">Title</th>
+                  <th scope="col">Aired</th>
+                </tr>
+              </thead>
+              <tbody>
+                {episodes.map((e) => (
+                  <tr key={e.id}>
+                    <td>{e.episode}</td>
+                    <td>
+                      <Link href={`/episodes/${e.id}`}>{e.name}</Link>
+                    </td>
+                    <td>{e.air_date}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="cel state">
+            <p>The episode list did not load. Refresh the page to try again.</p>
+          </div>
+        )}
+      </section>
+    </div>
+  );
 }
