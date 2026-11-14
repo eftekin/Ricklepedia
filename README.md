@@ -1,74 +1,36 @@
-![Ricklepedia Logo](/public/logogit.png)
+![Ricklepedia](public/logogit.png)
 
-## Wubba Lubba Dub Dub! <img src="public/portal.gif" alt="Small Portal" width="30" height="30">
+A fan-made index of Rick and Morty characters and episodes.
 
-Welcome to Ricklepedia - your interdimensional guide to everything Rick and Morty! This isn't just an encyclopedia; it's a portal to infinite knowledge, curated by the smartest man in the multiverse (or so he claims).
-
-## What is This?
-
-Ricklepedia is a Next.js-powered portal into the Rick and Morty universe, where you can:
-
-- Browse all characters across infinite dimensions
-- Explore every episode from C-137 and beyond
-- Save your favorite characters (even Jerry, if you're into that sort of thing)
-- Search and filter through the multiverse with ease
-
-## Tech Stack
-
-- Next.js 16
-- Tailwind CSS
-- Shadcn UI
-- Rick and Morty API
-- TypeScript
-
-## Getting Started
-
-To get this portal running in your dimension:
-
-```bash
-# Clone this repository
-git clone https://github.com/eftekin/Ricklepedia.git
-
-# Navigate to the project directory
-cd Ricklepedia
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to enter the multiverse.
+Live at [ricklepedia.eftekin.com](https://ricklepedia.eftekin.com).
 
 ## Features
 
-- Responsive design across all dimensions (devices)
-- Real-time character and episode data
-- Favorite character management
-- Advanced filtering system
-- Dark mode support (because space is dark)
+- Search all 826 characters by name, and filter by status, species and gender
+- A page for each character with their details and every episode they appear in
+- All 51 episodes grouped by season, each with its cast
+- Favorites, kept in your browser
+- A random character link
 
-## Quote of the Day
+Data comes from the [Rick and Morty API](https://rickandmortyapi.com), which covers seasons 1 to 5.
 
-> "Listen, Morty, I hate to break it to you, but what people call 'love' is just a chemical reaction that compels animals to breed." - Rick Sanchez
+## Stack
 
-## Coming Soon
+- Next.js 16 (App Router) and TypeScript
+- Plain CSS with design tokens in `app/globals.css`
+- Deployed on Vercel
 
-- User authentication and profile creation (because even in the multiverse, you need an account)
-- Chatbot to talk with Rick (warning: may include insults and existential dread)
-- Location explorer
-- Character statistics
-- Random character generator
+## Running locally
 
-## Contributing
+```bash
+git clone https://github.com/eftekin/Ricklepedia.git
+cd Ricklepedia
+npm install
+npm run dev
+```
 
-Feel free to contribute to this project! Whether you're from dimension C-137 or any other reality, all help is welcome. Just make sure your code doesn't turn anyone into a pickle.
+Then open [localhost:3000](http://localhost:3000).
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. Not that laws matter in an infinite multiverse, but still...
-
----
-
-> 🪐 This project may behave differently in your dimension. Use responsibly.
+MIT, see [LICENSE](LICENSE).
